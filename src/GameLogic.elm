@@ -136,7 +136,7 @@ captureCellsCore board idx1 opponent idxs helperfuns =
         if oobCheck idx then
             -- outside the boundaries. this state indicates failed search.
             -- for horizontal checks, this is the row boundaries
-            -- for vertical and diagonal checks, 0 and boardMax
+            -- for vertical checks, 0 and boardMax
             -- capture nothing
             []
         else

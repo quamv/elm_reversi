@@ -94,14 +94,7 @@ get the first and last indexes of the row at idx
 -}
 getRowFirstLastByIdx : Int -> (Int, Int)
 getRowFirstLastByIdx idx =
-    let
-        row =
-            (idx // cols)
-    in
-        (
-            row * cols,
-            ((row+1) * cols) - 1
-        )
+    getRowFirstLast (idx // cols)
 
 
 {-
