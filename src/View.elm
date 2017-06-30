@@ -26,7 +26,6 @@ view model =
             h1 [] [text "Reversi"]
             ,scoreboard model.gameBoard model.gameState
             ,boardTable model
-            ,div [] [text <| toString model.captures ]
         ]
 
 
@@ -72,35 +71,34 @@ getChipColor side =
         PlayerSide2 -> "white"
 
 
-getCellBg : Int -> Model -> String
-getCellBg idx model =
-    case getValByIdx idx model.gameBoard of
-        Just side ->
+gamePieceNode : PlayerSide -> Html Msg
+gamePieceNode side =
+    let
+        background =
             getChipColor side
 
-        Nothing ->
-            "none"
-
-
-viewGamePiece : List (String,String) -> Html Msg
-viewGamePiece fillStyle =
-    div
-        [style <| gamePieceStyle ++ fillStyle]
-        []
+        fillStyle =
+            [("background",background)]
+    in
+        div
+            [style <| gamePieceStyle ++ fillStyle]
+            []
 
 
 viewBoardCell : Int -> Model -> Html Msg
 viewBoardCell idx model =
     let
-        background =
-            getCellBg idx model
-
-        fillStyle =
-            [("background",background)]
+        cellContentNodes =
+            case getValByIdx idx model.gameBoard of
+                Nothing -> []
+                Just side -> [gamePieceNode side]
     in
         td
-            [style <| cellStyle, onClick (UserSelectsSquare idx)]
-            [viewGamePiece fillStyle]
+            [
+                style cellStyle,
+                onClick (UserSelectsSquare idx)
+            ]
+            cellContentNodes
 
 
 

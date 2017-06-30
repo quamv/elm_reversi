@@ -158,21 +158,21 @@ captureCellsCore board idx1 opponent idxs helperfuns =
                     -- we had no bounding cell. capture nothing.
                     []
 
+
+getPlayerScore : GameBoard -> PlayerSide -> Int
+getPlayerScore board player =
+    Array.length <|
+        Array.filter (\cell -> cell == Just player) board
+
 {-
 calculate the scores
 -}
 getScore : GameBoard -> (Int, Int)
 getScore board =
-    let
-        p1score =
-            Array.length <|
-                Array.filter (\cell -> cell == Just PlayerSide1) board
-
-        p2score =
-            Array.length <|
-                Array.filter (\cell -> cell == Just PlayerSide2) board
-    in
-        (p1score, p2score)
+    (
+        getPlayerScore board PlayerSide1
+        ,getPlayerScore board PlayerSide2
+    )
 
 
 
