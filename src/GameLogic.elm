@@ -1,5 +1,5 @@
 {-
-Manages the Connect 4 board and detects winners
+Manages the Rerversi board and capture logic
 -}
 module GameLogic exposing (
     userSelectsSquare,
