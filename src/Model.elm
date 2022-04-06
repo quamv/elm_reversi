@@ -1,7 +1,6 @@
 module Model exposing (..)
 
 import Array exposing (Array)
-import Keyboard exposing (KeyCode)
 
 type GameState = Normal | GameOver
 type Msg = UserSelectsSquare Int
@@ -16,8 +15,18 @@ type alias Model = {
     , selections: List Int
     , winner: Maybe PlayerSide
     , captures: List (List Int)
+    , lastClicked: Int
+    , lastClickedCellState: Maybe SquareState
+    , lastClickWasValid: Bool
     }
 
+rows : number
 rows = 8
+cols : number
 cols = 8
 
+gamestatestring : GameState -> String
+gamestatestring gameState =
+    case gameState of
+        Normal -> "Normal"
+        GameOver -> "Game Over"

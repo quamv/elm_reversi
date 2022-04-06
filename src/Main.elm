@@ -1,27 +1,27 @@
 {-
 Reversi in Elm
 -}
-module Main exposing (
-    main
-    )
+module Main exposing (main)
 
-{- system imports -}
-import Html exposing (beginnerProgram)
-import Keyboard exposing (KeyCode,downs)
-import Char exposing (fromCode)
+import Html exposing (..)
+import Browser
+
+-- import Keyboard exposing (KeyCode,downs)
+--import Char exposing (fromCode)
 {- local imports -}
 import Model exposing (..)
 import View exposing (view)
 import GameLogic exposing (userSelectsSquare)
-import Helpers exposing (togglePlayer,newBoard,setSquareState)
+import Helpers exposing (newBoard)
 
 
+main : Program () Model Msg
 main =
-    Html.beginnerProgram {
-        model = initmodel,
+    Browser.sandbox { 
+        init = initmodel,
         view = view,
-        update = update
-        }
+        update = update 
+    }
 
 
 initmodel : Model
@@ -33,6 +33,9 @@ initmodel =
         , selections = []
         , winner = Nothing
         , captures = []
+        , lastClicked = 0
+        , lastClickedCellState = Nothing
+        , lastClickWasValid = True
     }
 
 

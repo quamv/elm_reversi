@@ -27,6 +27,7 @@ type alias CompareAndIncFuncs = ((Int -> Bool), (Int -> Int))
 {-
 the maximum index on the board
 -}
+boardMax : number
 boardMax = (rows*cols) - 1
 
 
@@ -47,38 +48,48 @@ process a user selection
 -}
 userSelectsSquare : Model -> Int -> Model
 userSelectsSquare model idx =
+    let
+            squareState =
+                getValByIdx idx model.gameBoard
+    in
     -- first check if the cell is already occupied
-    case isValidMove idx model.gameBoard of
+    if isValidMove idx model.gameBoard then
+        -- not occupied. selection is valid
+        let
+            boardbeforecaptures =
+                -- change state of selected square
+                setSquareState idx (Just model.currentPlayer) model.gameBoard
 
-        True ->
-            -- not occupied. selection is valid
-            let
-                boardbeforecaptures =
-                    -- change state of selected square
-                    setSquareState idx (Just model.currentPlayer) model.gameBoard
+            opponent =
+                -- capturable state
+                togglePlayer model.currentPlayer
 
-                opponent =
-                    -- capturable state
-                    togglePlayer model.currentPlayer
+            newcaptures =
+                -- get a list of indexes to capture
+                captureCells model.gameBoard idx opponent
 
-                newcaptures =
-                    -- get a list of indexes to capture
-                    captureCells model.gameBoard idx opponent
-
-                boardwithcaptures =
-                    -- update the board with the newly captured cells
-                    setMany boardbeforecaptures newcaptures model.currentPlayer
-            in
-                {model |
-                    currentPlayer = togglePlayer model.currentPlayer
-                    ,captures = model.captures ++ [newcaptures]
-                    ,gameState = nextGameState boardwithcaptures
-                    ,gameBoard = boardwithcaptures}
-
-        False ->
-            -- already occupied. selection not valid
+            boardwithcaptures =
+                -- update the board with the newly captured cells
+                setMany boardbeforecaptures newcaptures model.currentPlayer
+        in
             {model |
-                currentPlayer = togglePlayer model.currentPlayer}
+                currentPlayer = togglePlayer model.currentPlayer
+                ,captures = model.captures ++ [newcaptures]
+                ,gameState = nextGameState boardwithcaptures
+                ,gameBoard = boardwithcaptures
+                ,lastClicked = idx
+                ,lastClickedCellState = squareState
+                ,lastClickWasValid = True
+            }
+
+    else
+        -- already occupied. selection not valid
+        {model |
+            currentPlayer = togglePlayer model.currentPlayer
+            ,lastClicked = idx
+            ,lastClickedCellState = squareState
+            ,lastClickWasValid = False
+        }
 
 
 {-
@@ -193,6 +204,7 @@ downHelpers =       ((\n -> n > boardMax), (\n -> n + cols))
 diagonal helpers have to account for the real arrangement of the grid
 to prevent for incorrect diagonal matches that wrap around
 -}
+downrightHelpers : Int -> (Int -> Bool, number -> number)
 downrightHelpers idx =
     let
         (row,col) =
@@ -212,6 +224,7 @@ downrightHelpers idx =
     in
         ((\n -> n > maxidx), (\n -> n + cols + 1))
 
+downleftHelpers : Int -> (Int -> Bool, number -> number)
 downleftHelpers idx =
     let
         (row,col) =
@@ -228,6 +241,7 @@ downleftHelpers idx =
     in
         ((\n -> n > maxidx), (\n -> n + cols - 1))
 
+upleftHelpers : Int -> (Int -> Bool, number -> number)
 upleftHelpers idx =
     let
         (row,col) =
@@ -241,9 +255,10 @@ upleftHelpers idx =
     in
         ((\n -> n < minidx), (\n -> n - cols - 1))
 
+uprightHelpers : Int -> (Int -> Bool, number -> number)
 uprightHelpers idx =
     let
-        (row,col) =
+        (_, col) =
             toRowCol idx
 
         colsFromRight =

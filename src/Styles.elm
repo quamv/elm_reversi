@@ -1,47 +1,54 @@
 module Styles exposing (..)
 
+import Html.Attributes exposing (..)
+
+--cellStyle : List (Attribute msg)
 cellStyle =
     [
-        ("border","4px ridge black")
-        ,("height","75px")
+        style "border" "4px ridge black"
+        ,style "height" "75px"
     ]
 boardRowStyle =
     [
-        ("width","100%")
+        style "width" "100%"
     ]
 fullWidthStyle =
     [
-        ("width","100%")
+        style "width" "100%"
     ]
 boardTableStyle =
     fullWidthStyle ++
     [
-        ("table-layout","fixed")
-        ,("width","100%")
+        style "table-layout" "fixed"
+        ,style "width" "100%"
     ]
 centeredStyle =
     [
-        ("margin","0 auto")
+        style "margin" "0 auto"
     ]
 mainContainerStyle =
     centeredStyle
     ++ [
-        ("min-width","600px")
-        ,("background","grey")
-        ,("overflow","hidden")
-        ,("padding","10px")
-        ,("text-align","center")
-        ,("padding-bottom","50px")
+        style "min-width" "600px"
+        ,style "background" "grey"
+        ,style "overflow" "hidden"
+        ,style "padding" "10px"
+        ,style "text-align" "center"
+        ,style "padding-bottom" "50px"
     ]
 gamePieceStyle =
     [
-        ("border-radius","100%")
-        ,("width","90%")
-        ,("height","90%")
+        style "border-radius" "100%"
+        ,style "width" "90%"
+        ,style "height" "90%"
     ]
     ++ centeredStyle
 scoreStyle =
-    [
-        ("margin","10px")
-        ,("font-size","xx-large")
+    [ 
+        style "margin" "10px"
+        ,style "font-size" "xx-large"
     ]
+    -- [
+    --     style "margin" "10px",
+    --     ,style "font-size" "xx-large",
+    -- ]

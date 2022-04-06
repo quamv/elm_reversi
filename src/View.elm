@@ -21,32 +21,43 @@ import Styles exposing (..)
 view : Model -> Html Msg
 view model =
     div
-        [ style mainContainerStyle]
+        mainContainerStyle
         [
             h1 [] [text "Reversi"]
-            ,scoreboard model.gameBoard model.gameState
+            ,scoreboard model
             ,boardTable model
         ]
 
 
-scoreboard : GameBoard -> GameState -> Html Msg
-scoreboard board gamestate =
+scoreboard : Model -> Html Msg
+scoreboard model =
     let
+        lastclickedstate = 
+            case model.lastClickedCellState of
+                Just PlayerSide1 -> "Player1"
+                Just PlayerSide2 -> "Player2"
+                Nothing -> "Empty"
+
+        lastclickwasvalid = if model.lastClickWasValid then "Yes" else "No"
+
         (sc1,sc2) =
-            getScore board
+            getScore model.gameBoard
     in
-        case gamestate of
+        case model.gameState  of
             Normal ->
                 div [] [
-                    span [style scoreStyle] [text <| "Player1: " ++ (toString sc1)]
-                    ,span [style scoreStyle] [text <| "Player2: " ++ (toString sc2)]
-                ]
+                    span scoreStyle [text <| "Player1: " ++ (String.fromInt sc1)]
+                    ,span scoreStyle [text <| "Player2: " ++ (String.fromInt sc2)]
+                    ,span scoreStyle [text <| "Last Clicked: " ++ (String.fromInt model.lastClicked)]
+                    ,span scoreStyle [text <| "LastClickedState: " ++ lastclickedstate ]
+                    ,span scoreStyle [text <| "LastClickWasValid: " ++ lastclickwasvalid ]
+                ] 
 
             GameOver ->
                 div [] [
-                    h3 [] [text <| (toString gamestate)]
-                    ,span [style scoreStyle] [text <| "Player1: " ++ (toString sc1)]
-                    ,span [style scoreStyle] [text <| "Player2: " ++ (toString sc2)]
+                    h3 [] [text <| (gamestatestring model.gameState)]
+                    ,span scoreStyle [text <| "Player1: " ++ (String.fromInt sc1)]
+                    ,span scoreStyle [text <| "Player2: " ++ (String.fromInt sc2)]
                 ]
 
 
@@ -61,7 +72,7 @@ boardTable model =
             List.map (\n -> viewBoardRow model n) rowNbrs
     in
         table
-            [style boardTableStyle]
+            boardTableStyle
             tableRows
 
 getChipColor : PlayerSide -> String
@@ -78,10 +89,13 @@ gamePieceNode side =
             getChipColor side
 
         fillStyle =
-            [("background",background)]
+            [ style "background" background ]
+
+        bothStyle =
+            gamePieceStyle ++ fillStyle
     in
         div
-            [style <| gamePieceStyle ++ fillStyle]
+            bothStyle
             []
 
 
@@ -94,10 +108,7 @@ viewBoardCell idx model =
                 Just side -> [gamePieceNode side]
     in
         td
-            [
-                style cellStyle,
-                onClick (UserSelectsSquare idx)
-            ]
+            (cellStyle ++ [ onClick (UserSelectsSquare idx) ])
             cellContentNodes
 
 
@@ -115,6 +126,6 @@ viewBoardRow model row =
             List.map (\n -> viewBoardCell n model) idxs
     in
         tr
-            [style boardRowStyle]
+            boardRowStyle
             rowCells
 

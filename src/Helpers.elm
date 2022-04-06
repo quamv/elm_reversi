@@ -86,7 +86,7 @@ extract the row and column indexes from a raw index
 -}
 toRowCol : Int -> (Int, Int)
 toRowCol idx =
-    (idx // cols, rem idx cols)
+    (idx // cols, remainderBy idx cols)
 
 
 {-
